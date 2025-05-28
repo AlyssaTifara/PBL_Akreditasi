@@ -1,87 +1,99 @@
-    <form action="{{ url('/dosen/ajax') }}" method="POST" id="form-tambah">
-    @csrf
-    <div id="modal-master" class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Tambah Data Dosen</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+@extends('layouts.template')
+
+@section('content')
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card mb-4">
+            <div class="card-header pb-0">
+                <h6>{{ $page->title }}</h6>
             </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label>Nama Dosen</label>
-                    <input type="text" name="nama" id="nama" class="form-control" required>
-                    <small id="error-nama" class="error-text form-text text-danger"></small>
+            <div class="card-body pt-1 p-3">
+                <div class="row">
+                    <div class="col">
+                        <a href="javascript:void(0)" onclick="modalAction('{{ url('dosen/create_ajax') }}')" class="btn btn-primary float-end me-3">Tambah Data Dosen</a>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label>NIP</label>
-                    <input type="number" name="NIP" id="NIP" class="form-control" required>
-                    <small id="error-NIP" class="error-text form-text text-danger"></small>
+
+                @if (session('success'))
+                    <div class="alert alert-success">{{ session('success') }}</div>
+                @endif
+                @if (session('error'))
+                    <div class="alert alert-danger">{{ session('error') }}</div>
+                @endif
+
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped" id="table_dosen">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Nama Dosen</th>
+                                <th>Nomor Induk Pegawai</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                    </table>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" data-dismiss="modal" class="btn btn-warning">Batal</button>
-                <button type="submit" class="btn btn-primary">Simpan</button>
             </div>
         </div>
     </div>
-</form>
+</div>
+@endsection
 
+@push('js')
 <script>
+var dataDosen;
+
+function modalAction(url = '') {
+    $('#myModal').load(url, function() {
+        $('#myModal').modal('show');
+    });
+}
+
 $(document).ready(function() {
-    $("#form-tambah").validate({
-        rules: {
-            nama: {
-                required: true,
-                minlength: 3,
-                maxlength: 100
+    // dataDosen = $('#table_dosen').DataTable({
+    //     serverSide: true,
+    //     processing: true, 
+    //     ajax: {
+    //         url: "{{ url('dosen/list') }}",
+    //         type: "POST",
+    //         data: {
+    //             _token: "{{ csrf_token() }}"
+    //         },
+    //         error: function(xhr) {j
+    //             console.log('Error:', xhr.responseText);
+    //         }
+    //     },
+    //     columns: [
+    //         { data: "DT_RowIndex", className: "text-center", orderable: false, searchable: false },
+    //         { data: "name" },
+    //         { data: "nip" },
+    //         { data: "kriteria" },
+    //         { data: "aksi", orderable: false, searchable: false }
+    //     ]
+    // });
+
+    dataDosen = $('#table_dosen').DataTable({
+        serverSide: true,
+        processing: true, 
+        ajax: {
+            url: "{{ url('dosen/list') }}",
+            type: "POST",
+            data: {
+                _token: "{{ csrf_token() }}"
             },
-            NIP: {
-                required: true,
-                number: true
+            error: function(xhr) {
+                console.log('Error:', xhr.responseText);
             }
         },
-        submitHandler: function(form) {
-            $.ajax({
-                url: form.action,
-                type: form.method,
-                data: $(form).serialize(),
-                success: function(response) {
-                    if (response.status) {
-                        $('#myModal').modal('hide');
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Berhasil',
-                            text: response.message
-                        });
-                        dataDosen.ajax.reload(); // Ganti sesuai dengan nama DataTable Anda
-                    } else {
-                        $('.error-text').text('');
-                        $.each(response.msgField, function(prefix, val) {
-                            $('#error-' + prefix).text(val[0]);
-                        });
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Terjadi Kesalahan',
-                            text: response.message
-                        });
-                    }
-                }
-            });
-            return false;
-        },
-        errorElement: 'span',
-        errorPlacement: function(error, element) {
-            error.addClass('invalid-feedback');
-            element.closest('.form-group').append(error);
-        },
-        highlight: function(element, errorClass, validClass) {
-            $(element).addClass('is-invalid');
-        },
-        unhighlight: function(element, errorClass, validClass) {
-            $(element).removeClass('is-invalid');
-        }
+        columns: [
+            { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
+            { data: 'nama'},
+            { data: 'nip'},
+            { data: 'aksi', orderable: false, searchable: false }
+        ]
     });
 });
 </script>
+@endpush

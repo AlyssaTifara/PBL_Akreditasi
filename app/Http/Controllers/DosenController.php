@@ -16,17 +16,17 @@ class DosenController extends Controller
         $breadcrumb = (object) [
             'title' => 'Data Dosen',
             'list' => 'Data Dosen',
-        ];
+        ]; 
 
         $page = (object) [
             'title' => 'Daftar Dosen yang tersimpan',
         ];
 
-        $activeMenu = 'data_dosen';
+        $activeMenu = 'dosen';
 
         $user = UserModel::all();
 
-        return view('admin.datadosen', ['breadcrumb' => $breadcrumb, 'activeMenu' => $activeMenu, 'page' => $page, 'user' => $user]);
+        return view('dosen.index', ['breadcrumb' => $breadcrumb, 'activeMenu' => $activeMenu, 'page' => $page, 'user' => $user]);
     }
 
     public function store(Request $request)
@@ -70,21 +70,40 @@ class DosenController extends Controller
         }
     }
 
+//     public function list(Request $request)
+// {
+
+//     if ($request->ajax()) {
+//         $dosens = DosenModel::with(['user.role'])->get();
+
+//         return DataTables::of($dosens)
+//             ->addIndexColumn()
+//             ->addColumn('nip', fn($row) => $row->nip)
+//             ->addColumn('nama', fn($row) => $row->nama)
+//             ->addColumn('role', function ($row) {
+//                 // Ambil role pertama dari relasi user (karena hasMany)
+//                 $user = $row->user->first();
+//                 return $user && $user->role ? $user->role->role_nama : '-';
+//             })
+//             ->addColumn('aksi', function ($row) {
+//                 return '<button class="btn btn-sm btn-primary">Edit</button> <button class="btn btn-sm btn-danger">Hapus</button>';
+//             })
+//             ->rawColumns(['aksi'])
+//             ->make(true);
+//         }
+//     }
+
     public function list(Request $request)
     {
         if ($request->ajax()) {
-            // Ambil data dari model sesuai field tabel
-            $dosen = DosenModel::select('dosen_id', 'nip', 'nama');
+            $dosens = DosenModel::with(['user.role'])->get();
 
-            return DataTables::of($dosen)
+            return DataTables::of($dosens)
                 ->addIndexColumn()
                 ->addColumn('nip', fn($row) => $row->nip)
                 ->addColumn('nama', fn($row) => $row->nama)
                 ->addColumn('aksi', function ($row) {
-                    return '
-                    <button class="btn btn-sm btn-primary" onclick="editDosen(' . $row->dosen_id . ')">Edit</button>
-                    <button class="btn btn-sm btn-danger" onclick="hapusDosen(' . $row->dosen_id . ')">Hapus</button>
-                ';
+                    return '<button class="btn btn-sm btn-primary">Edit</button> <button class="btn btn-sm btn-danger">Hapus</button>';
                 })
                 ->rawColumns(['aksi'])
                 ->make(true);
@@ -92,24 +111,21 @@ class DosenController extends Controller
     }
 
 
-    //     $dosens = DosenModel::select('dosen_id', 'dosen_nama', 'nip', 'role_nama')
-    //         ->with('user');
+    public function create()
+    {
+        $breadcrumb = (object) [
+            "title" => "Tambah Dosen",
+            "list" => ['Home', 'Dosen', 'Tambah']
+        ];
 
+        $page = (object) [
+            "title" => "Tambah Data Dosen"
+        ];
 
-    //     $users =
+        $level = DosenModel::all(); // ambil data level untuk ditampilkan di form
+        $activeMenu = 'dosen'; // set menu yang sedang aktif
 
-    //     if ($request->status) {
-    //         $kriterias->where('status_id', $request->status);
-    //     }
-    //     return DataTables::of($data)
-    //         ->addIndexColumn()
-    //         ->addColumn('aksi', function ($row) {
-    //             $btn = '<button class="btn btn-sm btn-primary">Edit</button> ';
-    //             $btn .= '<button class="btn btn-sm btn-danger">Hapus</button>';
-    //             return $btn;
-    //         })
-    //         ->rawColumns(['aksi'])
-    //         ->make(true);
-    // }
-
+        return view('dosen.create', ['breadcrumb' => $breadcrumb, 'page' => $page, 'activeMenu' => $activeMenu]);
+        // return view('dosen.create', ['breadcrumb' => $breadcrumb, 'activeMenu' => $activeMenu, 'page' => $page, 'user' => $user]);
+    }
 }
