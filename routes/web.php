@@ -55,11 +55,11 @@ Route::middleware('auth')->group(function () {
         Route::get('/export_pdf', [Kriteria1Controller::class, 'export_pdf']);
     });
 
+    // Login sbg dosen dan CRUD menggunakan AJAX
     Route::prefix('dosen')->group(function () {
         Route::get('/', [DosenController::class, 'index']);
         Route::post('/list', [DosenController::class, 'list']);
-        Route::post('/create_ajax', [DosenController::class, 'create']);
+        Route::get('/create', [DosenController::class, 'create']);
+        Route::post('/store', [DosenController::class, 'store']);
     });
-
-    // Route::get('dosen', [DosenController::class, 'index']); 
 });

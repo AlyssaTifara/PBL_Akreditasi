@@ -70,29 +70,6 @@ class DosenController extends Controller
         }
     }
 
-//     public function list(Request $request)
-// {
-
-//     if ($request->ajax()) {
-//         $dosens = DosenModel::with(['user.role'])->get();
-
-//         return DataTables::of($dosens)
-//             ->addIndexColumn()
-//             ->addColumn('nip', fn($row) => $row->nip)
-//             ->addColumn('nama', fn($row) => $row->nama)
-//             ->addColumn('role', function ($row) {
-//                 // Ambil role pertama dari relasi user (karena hasMany)
-//                 $user = $row->user->first();
-//                 return $user && $user->role ? $user->role->role_nama : '-';
-//             })
-//             ->addColumn('aksi', function ($row) {
-//                 return '<button class="btn btn-sm btn-primary">Edit</button> <button class="btn btn-sm btn-danger">Hapus</button>';
-//             })
-//             ->rawColumns(['aksi'])
-//             ->make(true);
-//         }
-//     }
-
     public function list(Request $request)
     {
         if ($request->ajax()) {
@@ -111,7 +88,7 @@ class DosenController extends Controller
     }
 
 
-    public function create()
+    public function create() 
     {
         $breadcrumb = (object) [
             "title" => "Tambah Dosen",
@@ -122,10 +99,13 @@ class DosenController extends Controller
             "title" => "Tambah Data Dosen"
         ];
 
-        $level = DosenModel::all(); // ambil data level untuk ditampilkan di form
-        $activeMenu = 'dosen'; // set menu yang sedang aktif
+        // Mengambil semua data user untuk ditampilkan di dropdown form,
+        // agar dosen bisa dikaitkan dengan user tertentu.
+        $users = UserModel::all();
 
-        return view('dosen.create', ['breadcrumb' => $breadcrumb, 'page' => $page, 'activeMenu' => $activeMenu]);
-        // return view('dosen.create', ['breadcrumb' => $breadcrumb, 'activeMenu' => $activeMenu, 'page' => $page, 'user' => $user]);
+        $activeMenu = 'dosen'; // Set menu yang sedang aktif
+
+        // Mengirimkan data breadcrumb, page, activeMenu, dan users ke view
+        return view('dosen.create', compact('breadcrumb', 'page', 'activeMenu', 'users'));
     }
 }

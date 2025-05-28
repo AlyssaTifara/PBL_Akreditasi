@@ -23,13 +23,12 @@
                 @endif
 
                 <div class="table-responsive">
-                    <table class="table table-bordered table-striped" id="table_dosen">
+                    <table class="table table-bordered table-striped" id="table_dosen" style="text-align: center">
                         <thead>
                             <tr>
                                 <th>No</th>
                                 <th>Nama Dosen</th>
                                 <th>Nomor Induk Pegawai</th>
-                                <th>Hak Pengisian Kriteria</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -51,31 +50,8 @@ function modalAction(url = '') {
         $('#myModal').modal('show');
     });
 }
-
-$(document).ready(function() {
-    // dataDosen = $('#table_dosen').DataTable({
-    //     serverSide: true,
-    //     processing: true, 
-    //     ajax: {
-    //         url: "{{ url('dosen/list') }}",
-    //         type: "POST",
-    //         data: {
-    //             _token: "{{ csrf_token() }}"
-    //         },
-    //         error: function(xhr) {j
-    //             console.log('Error:', xhr.responseText);
-    //         }
-    //     },
-    //     columns: [
-    //         { data: "DT_RowIndex", className: "text-center", orderable: false, searchable: false },
-    //         { data: "name" },
-    //         { data: "nip" },
-    //         { data: "kriteria" },
-    //         { data: "aksi", orderable: false, searchable: false }
-    //     ]
-    // });
-
-    dataDosen = $('#table_dosen').DataTable({
+    $(document).ready(function() {
+        dataDosen = $('#table_dosen').DataTable({
         serverSide: true,
         processing: true, 
         ajax: {
@@ -89,11 +65,10 @@ $(document).ready(function() {
             }
         },
         columns: [
-            { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
-            { data: 'nama'},
-            { data: 'nip'},
-            { data: 'role'},
-            { data: 'aksi', orderable: false, searchable: false }
+            { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false, className: 'text-center' },
+            { data: 'nama', className: 'text-start' },
+            { data: 'nip', className: 'text-start' },
+            { data: 'aksi', orderable: false, searchable: false, className: 'text-start' }
         ]
     });
 });
